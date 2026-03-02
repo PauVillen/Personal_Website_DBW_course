@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clustal Omega Web App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f9; padding-top: 40px; padding-bottom: 40px;}
+        .card { border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: none; }
+        .card-header { background-color: #0d6efd; color: white; border-top-left-radius: 10px !important; border-top-right-radius: 10px !important; }
+        .textarea-font { font-family: 'Courier New', Courier, monospace; }
+    </style>
+</head>
+<body>
+    <div class="container" style="max-width: 800px;">
+        <div class="text-center mb-4">
+            <h1 class="fw-bold">Clustal Omega</h1>
+            <p class="text-muted">Multiple Sequence Alignment Tool</p>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong><i class="bi bi-exclamation-triangle-fill"></i> Error Detected:</strong><br> {{ error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+
+        <div class="card">
+            <div class="card-header h5 py-3">
+                Alignment Parameters
+            </div>
+            <div class="card-body p-4">
+                <form action="/align" method="POST" enctype="multipart/form-data">
+                    
+                    <div class="mb-4">
+                        <label for="job_title" class="form-label fw-bold">Alignment Title (Optional)</label>
+                        <input type="text" class="form-control" id="job_title" name="job_title" placeholder="">
+                    </div>
+
+                    <hr class="mb-4">
+
+                    <div class="mb-4">
+                        <label for="sequence_input" class="form-label fw-bold">Input Sequences or IDs to align</label>
+                        <div class="alert alert-info py-2 mb-3" style="font-size: 0.9rem;">
+                            <strong>Auto-detect enabled:</strong> You may paste raw FASTA sequences, PDB IDs, or UniProt IDs. The system will automatically detect the format <br>
+                            <span class="text-danger fw-bold">Important: You must enter exactly ONE identifier per line. Do not use spaces or commas.</span>
+                        </div>
+                        <textarea class="form-control textarea-font" id="sequence_input" name="sequence_input" rows="6" placeholder=""></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="file_upload" class="form-label fw-bold">Or Upload a FASTA File</label>
+                        <input class="form-control" type="file" id="file_upload" name="file_upload" accept=".fasta,.txt,.fas,.fa">
+                        <div class="form-text">File upload will override the text box above.</div>
+                    </div>
+
+                    <hr class="mb-4">
+
+                    <div class="mb-4">
+                        <label for="outfmt" class="form-label fw-bold">Output Format</label>
+                        <select class="form-select" id="outfmt" name="outfmt" style="max-width: 200px;">
+                            <option value="clustal" selected>Clustal</option>
+                            <option value="fasta">FASTA</option>
+                            <option value="msf">MSF</option>
+                            <option value="phylip">Phylip</option>
+                            <option value="selex">Selex</option>
+                            <option value="stockholm">Stockholm</option>
+                            <option value="vienna">Vienna</option>
+                        </select>
+                    </div>
+
+                    <hr class="mb-4">
+
+                    <div class="mb-4 p-3 border rounded bg-light">
+                        <label class="form-label fw-bold">Advanced Algorithm Options (Optional)</label>
+                        
+                        <div class="mb-3">
+                            <label for="iterations" class="form-label">HMM Refinement Iterations:</label>
+                            <select class="form-select" id="iterations" name="iterations" style="max-width: 200px;">
+                                <option value="0" selected>0 (Fastest, Default)</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3 (Maximum accuracy)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="dealign" name="dealign" value="yes">
+                            <label class="form-check-label" for="dealign">
+                                <strong>Dealign Input:</strong> Remove existing gaps from sequences before aligning
+                            </label>
+                        </div>
+                        
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="full_matrix" name="full_matrix" value="yes">
+                            <label class="form-check-label" for="full_matrix">
+                                <strong>Full Distance Matrix:</strong> Slower calculation, but highly accurate for small datasets
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 mt-4">
+                        <button type="reset" class="btn btn-outline-secondary btn-lg w-25">Reset</button>
+                        <button type="submit" class="btn btn-primary btn-lg w-75">Execute Alignment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
