@@ -1,3 +1,5 @@
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from werkzeug.exceptions import NotFound
 from flask import Flask, render_template, request, send_file
 import requests
 import subprocess
@@ -147,6 +149,15 @@ def download(job_id):
     if os.path.exists(output_file):
         return send_file(output_file, as_attachment=True, download_name=f"{title}.aln")
     return "File not found.", 404
+
+PREFIX = '/u321778_clustal-o' 
+
+@app.context_processor
+def inject_prefix():
+    return dict(PREFIX=PREFIX)
+
+hostedApp = Flask(__name__)
+hostedApp.wsgi_app = DispatcherMiddleware(NotFound(), {f"{PREFIX}": app})
 
 if __name__ == '__main__':
     app.run(debug=True)
